@@ -178,3 +178,23 @@ Dio is especially appropriate when the project needs:
 - more flexible request management than `package:http`.
 
 For strict typed REST APIs, Dio is often combined with packages such as `retrofit` and `json_serializable`.
+
+## Screenshots
+
+### Main screen
+![Main screen](screenshots/main.png)
+
+### Search
+![Search](screenshots/search.png)
+
+### Create post
+![Create post](screenshots/create.png)
+
+### Details
+![Details](screenshots/details.png)
+
+### Edit post
+![Edit post](screenshots/edit.png)
+
+### Error state
+![Error state](screenshots/error.png)

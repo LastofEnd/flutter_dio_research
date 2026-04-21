@@ -76,6 +76,32 @@ class PostsViewModel extends ChangeNotifier {
     }
   }
 
+  Future<bool> updatePost(int id, String title, String body) async {
+    try {
+      final updated = await repository.updatePost(
+        id,
+        PostModel(userId: 1, id: id, title: title, body: body),
+      );
+
+      final index = _posts.indexWhere((e) => e.id == id);
+      if (index != -1) {
+        _posts[index] = updated;
+      }
+
+      final filteredIndex = _filteredPosts.indexWhere((e) => e.id == id);
+      if (filteredIndex != -1) {
+        _filteredPosts[filteredIndex] = updated;
+      }
+
+      notifyListeners();
+      return true;
+    } catch (e) {
+      _errorMessage = 'Не вдалося оновити пост';
+      notifyListeners();
+      return false;
+    }
+  }
+
   Future<void> deletePost(int id) async {
     try {
       await repository.deletePost(id);

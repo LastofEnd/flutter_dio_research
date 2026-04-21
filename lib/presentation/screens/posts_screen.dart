@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../viewmodels/posts_viewmodel.dart';
 import 'create_post_screen.dart';
+import 'post_details_screen.dart';
 
 class PostsScreen extends StatelessWidget {
   const PostsScreen({super.key});
@@ -83,6 +84,14 @@ class PostsScreen extends StatelessWidget {
                           vertical: 6,
                         ),
                         child: ListTile(
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (_) => PostDetailsScreen(post: post),
+                              ),
+                            );
+                          },
                           title: Text(post.title),
                           subtitle: Text(
                             post.body,

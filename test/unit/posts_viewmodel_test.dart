@@ -24,6 +24,31 @@ void main() {
   });
 
   group('PostsViewModel unit tests', () {
+
+    test('updatePost should modify post in list', () async {
+  final fakePosts = [
+    PostModel(userId: 1, id: 1, title: 'Old title', body: 'Old body'),
+  ];
+
+  final updatedPost = PostModel(
+    userId: 1,
+    id: 1,
+    title: 'New title',
+    body: 'New body',
+  );
+
+  when(() => repository.getPosts()).thenAnswer((_) async => fakePosts);
+  when(() => repository.updatePost(1, any())).thenAnswer((_) async => updatedPost);
+
+  await viewModel.loadPosts();
+
+  final result = await viewModel.updatePost(1, 'New title', 'New body');
+
+  expect(result, true);
+  expect(viewModel.posts.first.title, 'New title');
+  expect(viewModel.posts.first.body, 'New body');
+});
+
     test('loadPosts success should fill posts list', () async {
       final fakePosts = [
         PostModel(userId: 1, id: 1, title: 'Hello', body: 'World'),

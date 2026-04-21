@@ -12,8 +12,18 @@ class PostApiService {
     return data.map((e) => PostModel.fromJson(e)).toList();
   }
 
+  Future<PostModel> getPost(int id) async {
+    final response = await dio.get('/posts/$id');
+    return PostModel.fromJson(response.data);
+  }
+
   Future<PostModel> createPost(PostModel post) async {
     final response = await dio.post('/posts', data: post.toJson());
+    return PostModel.fromJson(response.data);
+  }
+
+  Future<PostModel> updatePost(int id, PostModel post) async {
+    final response = await dio.put('/posts/$id', data: post.toJson());
     return PostModel.fromJson(response.data);
   }
 

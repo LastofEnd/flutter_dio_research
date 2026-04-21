@@ -1,18 +1,30 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import '../../data/models/post_model.dart';
 import '../viewmodels/posts_viewmodel.dart';
 
 class CreatePostScreen extends StatefulWidget {
-  const CreatePostScreen({super.key});
+  final PostModel? post;
+
+  const CreatePostScreen({super.key, this.post});
 
   @override
   State<CreatePostScreen> createState() => _CreatePostScreenState();
 }
 
 class _CreatePostScreenState extends State<CreatePostScreen> {
-  final _titleController = TextEditingController();
-  final _bodyController = TextEditingController();
+  late final TextEditingController _titleController;
+  late final TextEditingController _bodyController;
   bool _isSaving = false;
+
+  bool get isEdit => widget.post != null;
+
+  @override
+  void initState() {
+    super.initState();
+    _titleController = TextEditingController(text: widget.post?.title ?? '');
+    _bodyController = TextEditingController(text: widget.post?.body ?? '');
+  }
 
   @override
   void dispose() {
@@ -32,7 +44,13 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
     });
 
     final vm = context.read<PostsViewModel>();
-    final ok = await vm.createPost(title, body);
+
+    bool ok;
+    if (isEdit && widget.post?.id != null) {
+      ok = await vm.updatePost(widget.post!.id!, title, body);
+    } else {
+      ok = await vm.createPost(title, body);
+    }
 
     setState(() {
       _isSaving = false;
@@ -44,7 +62,11 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
       Navigator.pop(context);
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Помилка створення поста')),
+        SnackBar(
+          content: Text(
+            isEdit ? 'Помилка оновлення поста' : 'Помилка створення поста',
+          ),
+        ),
       );
     }
   }
@@ -53,7 +75,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Створити пост'),
+        title: Text(isEdit ? 'Редагувати пост' : 'Створити пост'),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16),
@@ -81,8 +103,12 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
               child: ElevatedButton(
                 onPressed: _isSaving ? null : _save,
                 child: _isSaving
-                    ? const CircularProgressIndicator()
-                    : const Text('Зберегти'),
+                    ? const SizedBox(
+                        width: 18,
+                        height: 18,
+                        child: CircularProgressIndicator(strokeWidth: 2),
+                      )
+                    : Text(isEdit ? 'Оновити' : 'Зберегти'),
               ),
             ),
           ],
